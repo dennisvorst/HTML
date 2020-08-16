@@ -1,5 +1,5 @@
 <?php
-class Html
+class HtmlObject
 {
 	protected $_allowedAttr = [];
 	protected $_attributes = [];

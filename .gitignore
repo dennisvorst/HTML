@@ -1,3 +1,7 @@
 
 distribute.bat
 cmd.bat
+dump.bat
+tests.bat
+
+vendor/
