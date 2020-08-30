@@ -1,5 +1,5 @@
 <?php
-class HtmlObject
+class HtmlElement
 {
 	protected $_allowedAttr = [];
 	protected $_attributes = [];
@@ -15,10 +15,15 @@ class HtmlObject
 
 	/* constructor */
 	function __construct(string $tag, array $attributes = null){
+		if (empty($tag))
+		{
+			throw new InvalidArgumentException("HtmlElement::__construct: Tag is mandatory");
+		}
+
 		$this->_tag = $tag;
 
 		$this->_allowedAttr = $this->_getAllowedAllAttr();
-		$this->_attributes = $this->_setAttributes($attributes);
+		$this->_attributes = $attributes;
 	}
 
 	protected function _getTag() : string
@@ -46,7 +51,8 @@ class HtmlObject
 		}
 	}
 
-	protected function _getContent($nmCurrentTab, $nrCurrentPage) : string
+//	protected function _getContent($nmCurrentTab , $nrCurrentPage) : string
+	protected function _getContent() : string
 	{
 		return (empty($this->_content) ? "" : $this->_content);
 	}
@@ -62,22 +68,27 @@ class HtmlObject
 		return $this->_allowedAttr;
 	}
 
-	/* set the attrivbutes that are allowed in the html */
-	protected function _setAttributes(array $attr = null) : array
+	function show() : string
 	{
-		if (empty($this->_attributes))
-		{
-			if (!empty($attr))
-			{
-				$keys = array_intersect(array_keys($attr), $this->_allowedAttr);
-				foreach ($keys as $key)
-				{
-					$this->_attributes[$key] = $attr[$key];
-				}
-			}
-		}
-		return (empty($this->_attributes) ? [] : $this->_attributes);
+		return $this->getElement();
 	}
+
+	/* set the attrivbutes that are allowed in the html */
+	// protected function _setAttributes(array $attr = null) : array
+	// {
+	// 	if (empty($this->_attributes))
+	// 	{
+	// 		if (!empty($attr))
+	// 		{
+	// 			$keys = array_intersect(array_keys($attr), $this->_allowedAttr);
+	// 			foreach ($keys as $key)
+	// 			{
+	// 				$this->_attributes[$key] = $attr[$key];
+	// 			}
+	// 		}
+	// 	}
+	// 	return (empty($this->_attributes) ? [] : $this->_attributes);
+	// }
 
 	/* turn the attributes into an HTML string */
 	protected function _getAttributes() : string

@@ -1,31 +1,36 @@
 <?php 
-require_once "class/Html.php";
-require_once "class/HtmlTableCell.php";
+require_once "HtmlElement.php";
+require_once "HtmlTableCell.php";
+require_once "HtmlTableCellCollection.php";
 
-class HtmlTableRow extends Html{
-	protected $_cells = [];
+
+class HtmlTableRow extends HtmlElement{
+	protected $_cellCollection = [];
 	protected $_type;
 
 	/* constructor */
-	function __construct(array $cells, array $attributes = null, string $type = null){
-		parent::__construct("tr", $attributes);
+	function __construct(HtmlTableCellCollection $cells, array $attributes = null, string $type = "td"){
+		parent::__construct($type, $attributes);
 
-		$this->_type = $type;
-		foreach ($cells as $cell)
-		{
-			$this->_cells[] = new HtmlTableCell((empty($cell) ? "" : $cell), [], $this->_type);
-		}
+		$this->_cellCollection = $cells;
 	}
 
 	function getElement() : string
 	{
 		/* create the content */
 		$content = "";
-		foreach ($this->_cells as $cell)
+		$cells = $this->_cellCollection->get();
+
+		foreach ($cells as $cell)
 		{
 			$content .= $cell->getElement();
 		}
 		/* enclose it */
 		return $this->_encloseTags($content) . "\n";
+	}
+
+	function getType() : string
+	{
+		return $this->_type;
 	}
 }

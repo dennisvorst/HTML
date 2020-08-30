@@ -1,19 +1,29 @@
 <?php
-class HtmlTable{
+require_once "HtmlElement.php";
+require_once "HtmlTableRow.php";
+require_once "HtmlTableCell.php";
+require_once "HtmlTableRowCollection.php";
+
+class HtmlTable extends HtmlElement{
+
+	private $_headers = [];
+	private $_rows = [];
+	private $_footers = [];
 
 	/* constructor */
-	function __construct(){
+	function __construct(HtmlTableRowCollection $rows){
+		$this->_headers = $rows->getHeaders();
+		$this->_rows = $rows->getRows();
+		$this->_footers = $rows->getFooters();
 	}
 
-	function createHtmlTable($ftheaders, $ftrows, $ftfooters = null){
+	function createHtmlTable(HtmlTableRowCollection $ftrows, HtmlTableRow $ftheader = null, HtmlTableRow $ftfooter = null) {
 		/**
 		* create a table from two arrays. One containing the headers amd one containing the rowinformation.
 		$ftheader = array()
 		$ftvalues = array()
 		*/
 		$html = $this->getTableStart();
-
-//		print_R($ftrows);
 
 		/*  create the headers, if there are any */
 		if (isset($ftheaders)){
@@ -29,6 +39,55 @@ class HtmlTable{
 		}
 
 		$html .= $this->getTableEnd();
+		return $html;
+	}
+
+	function show() : string {
+		/** start the table */
+		$html = "<table class='table'>\n";
+
+		/** get the header */
+		if ($this->_headers)
+		{
+			$html .= "  <thead>\n";
+			foreach($this->_headers as $header) 
+			{
+				$html .= "    <tr>\n";
+				$html .= "      " . $header->show();
+				$html .= "    </tr>\n";
+			}		
+			$html .= "  </thead>\n";
+		}
+
+		/** get the rows */
+		if ($this->_rows)
+		{
+			$html .= "  <tbody>\n";
+			foreach($this->_rows as $row) 
+			{
+				$html .= "    <tr>\n";
+				$html .= "      " . $row->show();
+				$html .= "    </tr>\n";
+			}		
+			$html .= "  </tbody>\n";	
+		} 
+
+		/** get the footer */
+		if ($this->_footers)
+		{
+			$html .= "  <tfoot>\n";		
+			foreach($this->_footers as $footer) 
+			{
+				$html .= "    <tr>\n";
+				$html .= "      " . $footer->show();
+				$html .= "    </tr>\n";
+			}		
+			$html .= "  </tfoot>\n";		
+		}
+
+		/** close the table */
+		$html .= "</table>\n";
+		
 		return $html;
 	}
 
@@ -93,12 +152,12 @@ class HtmlTable{
 		return $html;
 	}
 
-	function getTableStart(){
-		return "<table><!-- HtmlTable -->\n";
-	}
-	function getTableEnd(){
-		return "</table><!-- HtmlTable -->\n";
-	}
+	// function getTableStart(){
+	// 	return "<table><!-- HtmlTable -->\n";
+	// }
+	// function getTableEnd(){
+	// 	return "</table><!-- HtmlTable -->\n";
+	// }
 
 	function getHeader($ftvalues){
 		/* this function creates the header row in a table */
